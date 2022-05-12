@@ -17,6 +17,7 @@ class PersonDaoJdbcTest {
     private static final int EXPECTED_PERSONS_COUNT = 2;
     private static final long MISHA_ID = 2L;
     private static final String MISHA_NAME = "misha";
+    private static final long EXPECTED_NEW_ID = 1L;
 
     @Autowired
     private PersonDaoJdbc personDaoJdbc;
@@ -50,5 +51,19 @@ class PersonDaoJdbcTest {
                 .hasFieldOrPropertyWithValue("id", MISHA_ID)
                 .hasFieldOrPropertyWithValue("name", MISHA_NAME);
 
+    }
+
+
+    @Test
+    void insertWithReturnId() {
+        Person vanya = new Person("Vanya");
+        long newId = personDaoJdbc.insertWithReturnId(vanya);
+        System.out.println("newId: " + newId);
+//        int count = personDaoJdbc.count();
+//        assertThat(count).isEqualTo(EXPECTED_PERSONS_COUNT+1);
+
+        Person byId = personDaoJdbc.getById(newId);
+        assertThat(byId).isNotNull();
+        assertThat(EXPECTED_NEW_ID).isEqualTo(newId);
     }
 }

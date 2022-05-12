@@ -3,7 +3,10 @@ package com.example.springjdbc.dao;
 import com.example.springjdbc.domain.Person;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -56,6 +59,16 @@ public class PersonDaoJdbc implements PersonDao {
         namedParameterJdbcOperations.update(
                 "delete from persons where id = :id", params
         );
+    }
+
+    @Override
+    public long insertWithReturnId(Person person) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("name", person.getName());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcOperations.update("insert into persons1(`name`) values (:name)",
+                mapSqlParameterSource, keyHolder);
+        return keyHolder.getKey().longValue();
     }
 
     private static class PersonMapper implements RowMapper<Person> {
